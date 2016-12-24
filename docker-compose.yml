@@ -1,0 +1,29 @@
+version: "2.0"
+
+volumes:
+  app:
+    external: false
+  db:
+    external: false
+
+services:
+  mariadb:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: processmaker
+    restart: unless-stopped
+    volumes:
+      - db:/var/lib/mysql
+  
+  processmaker:
+    #build:
+    #  context: .
+    #  dockerfile: Dockerfile
+    image: kumadocker/processmaker
+    links:
+      - mariadb:mysql
+    volumes:
+      - app:/opt/processmaker/shared
+    ports:
+      - 0.0.0.0:8888:80/tcp
+    restart: unless-stopped
